@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../App.css";
 
 const Pagination = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -17,7 +16,7 @@ const Pagination = () => {
     vehicleTypes: [],
     vehicleNames: [],
   });
-  const limit = 10;
+  const limit = 5;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -87,7 +86,7 @@ const Pagination = () => {
     setCurrentPage(pageNumber);
   };
 
-  // Clear all filters
+  // Clear all filters and reset URL
   const handleClearFilters = () => {
     setFilters({
       agencyName: "",
@@ -95,11 +94,17 @@ const Pagination = () => {
       vehicleType: "",
     });
     setCurrentPage(1); // Reset to first page after clearing filters
+    
+    // Reset URL to default parameters
+    const params = new URLSearchParams();
+    params.set("page", 1);
+    params.set("limit", limit);
+    navigate({ search: params.toString() });
   };
 
   return (
     <div className="container">
-      <h1 className="title">Vehicle Pagination</h1>
+      {/* <h1 className="title">Vehicle Pagination</h1> */}
 
       {/* Filters Section */}
       <div className="filters">
@@ -176,19 +181,33 @@ const Pagination = () => {
         </tbody>
       </table>
 
+      {/* Show message if no vehicles are found */}
+      {vehicles.length === 0 && (
+        <p>No vehicles found based on the selected filters.</p>
+      )}
+
       {/* Pagination Buttons */}
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, index) => (
+      {vehicles.length > 0 && (
+        <div className="pagination">
+          {/* Previous Button */}
           <button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            disabled={currentPage === index + 1}
-            className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="page-btn prev-btn"
           >
-            {index + 1}
+            Prev
           </button>
-        ))}
-      </div>
+
+          {/* Next Button */}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="page-btn next-btn"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

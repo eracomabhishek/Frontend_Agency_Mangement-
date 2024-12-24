@@ -87,6 +87,7 @@ code {
   color: white;
   border: none;
   cursor: pointer;
+  border-radius: 40px;
 }
 
 .clear-filters-btn:hover {
